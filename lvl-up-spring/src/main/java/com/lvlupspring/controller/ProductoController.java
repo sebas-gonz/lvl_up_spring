@@ -37,7 +37,7 @@ public class ProductoController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable("id") Long id) {
         productoService.delete(id);
         return ResponseEntity.noContent().build();
@@ -54,4 +54,12 @@ public class ProductoController {
         List<Producto> productos = productoService.findByCategoriaId(categoriaId);
         return ResponseEntity.ok(productos);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable("id") Long id, @Valid @RequestBody ProductoDTO dto) {
+        Producto productoExistente = productoService.findById(id);
+        return productoExistente == null ? ResponseEntity.notFound().build() :  ResponseEntity.ok(productoService.actualizarProducto(id, dto));
+    }
+
 }

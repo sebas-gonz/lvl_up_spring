@@ -39,4 +39,10 @@ public class BoletaController {
         Boleta nuevaBoleta = boletaService.crearBoleta(dto,emailUsuario);
         return ResponseEntity.ok(nuevaBoleta);
     }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Boleta>> obtenerHistorial(@PathVariable Long usuarioId) {
+        List<Boleta> historial = boletaService.obtenerHistorialUsuario(usuarioId);
+        return ResponseEntity.ok(historial);
+    }
 }

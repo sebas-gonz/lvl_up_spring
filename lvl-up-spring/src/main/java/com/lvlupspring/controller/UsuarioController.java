@@ -37,4 +37,21 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/perfil")
+    public ResponseEntity<UsuarioDTO> actualizarPerfil(
+            @RequestBody UsuarioDTO usuarioDTO,
+            Authentication authentication) {
+        String usernameActual = authentication.getName();
+        UsuarioDTO usuarioActualizado = usuarioService.actualizarPerfil(usuarioDTO,usernameActual);
+
+        return ResponseEntity.ok(usuarioActualizado);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> deleteUsuarioByAdmin(@PathVariable("id") Long id) {
+        usuarioService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

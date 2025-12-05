@@ -1,5 +1,7 @@
 package com.lvlupspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -67,9 +69,11 @@ public class Producto {
     private LocalDateTime updatedAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "producto")
+    @JsonIgnore
     private List<DetalleBoleta> detalleBoletas;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
+    @JsonIgnoreProperties({"productos", "hibernateLazyInitializer", "handler"})
     private Categoria categoria;
 }

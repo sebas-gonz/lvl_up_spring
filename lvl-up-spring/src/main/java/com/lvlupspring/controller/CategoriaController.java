@@ -1,5 +1,6 @@
 package com.lvlupspring.controller;
 
+import com.lvlupspring.dto.CategoriaDTO;
 import com.lvlupspring.entity.Categoria;
 import com.lvlupspring.repository.CategoriaRepository;
 import com.lvlupspring.service.CategoriaService;
@@ -23,16 +24,23 @@ public class CategoriaController {
         }
 
         @GetMapping("/{id}")
-        public ResponseEntity<Categoria> obtenerCategoriaPorId(@PathVariable("id") Long id){
-            Categoria categoria = categoriaService.categoriaPorId(id);
+        public ResponseEntity<CategoriaDTO> obtenerCategoriaPorId(@PathVariable("id") Long id){
+            CategoriaDTO categoria = categoriaService.categoriaPorId(id);
             return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
         }
 
         @PreAuthorize("hasRole('ADMIN')")
         @PostMapping
-        public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria){
+        public ResponseEntity<Categoria> crearCategoria(@RequestBody CategoriaDTO categoria){
             Categoria nuevaCategoria = categoriaService.crearCategoria(categoria);
             return ResponseEntity.status(201).body(nuevaCategoria);
+        }
+
+        @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/{id}")
+        public ResponseEntity<CategoriaDTO> actualizarCategoria(@PathVariable("id") Long id, @RequestBody CategoriaDTO dto) {
+            CategoriaDTO categoriaActualizada = categoriaService.actualizarCategoria(id, dto);
+            return categoriaActualizada != null ? ResponseEntity.ok(categoriaActualizada) : ResponseEntity.notFound().build();
         }
 
         @PreAuthorize("hasRole('ADMIN')")

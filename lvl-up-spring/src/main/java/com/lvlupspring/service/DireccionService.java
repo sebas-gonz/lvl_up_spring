@@ -23,16 +23,18 @@ public class DireccionService {
         return direccionRepository.save(direccion);
     }
 
-    public Direccion crearDireccion(String emailUsuario, DireccionDTO dto) {
+    public DireccionDTO crearDireccion(String emailUsuario, DireccionDTO dto) {
         Usuario usuario = usuarioRepository.findByEmail(emailUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Comuna comuna = comunaRepository.findByNombreComuna(dto.getComuna()).orElseThrow(() -> new RuntimeException("Comuna no encontrada"));
+        Comuna comuna = comunaRepository.findById(dto.getComuna()).orElseThrow(() -> new RuntimeException("Comuna no encontrada"));
 
         Direccion direccion = new Direccion();
         direccion.setCalle(dto.getCalle());
         direccion.setNumeroDepto(dto.getNumeroDepto());
         direccion.setUsuario(usuario);
         direccion.setComuna(comuna);
-        return direccionRepository.save(direccion);
+        direccion.setIndicaciones(dto.getIndicaciones());
+        direccionRepository.save(direccion);
+        return mapearDTO(direccion);
     }
 
     public void deleteById(Long id) {
@@ -43,7 +45,7 @@ public class DireccionService {
         DireccionDTO direccionDTO = new DireccionDTO();
         direccionDTO.setCalle(direccion.getCalle());
         direccionDTO.setNumeroDepto(direccion.getNumeroDepto());
-        direccionDTO.setComuna(direccion.getComuna().getNombreComuna());
+        direccionDTO.setComuna(direccion.getComuna().getComunaId());
         direccionDTO.setIndicaciones(direccion.getIndicaciones());
         return direccionDTO;
     }
@@ -51,5 +53,13 @@ public class DireccionService {
     public List<DireccionDTO> findByUsuarioEmail(String email) {
         List<Direccion> direcciones = direccionRepository.findByUsuario_Email(email);
         return direcciones.stream().map(this::mapearDTO).toList();
+    }
+
+    public Direccion findById(Long id) {
+        return direccionRepository.findById(id).orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+    }
+
+    public List<Direccion> findAll() {
+        return direccionRepository.findAll();
     }
 }

@@ -12,4 +12,5 @@ public class DetalleDTO {
     @NotNull
     @Min(value = 1, message = "La cantidad debe ser al menos 1")
     private Integer cantidad;
+    private Integer subTotal;
 }

@@ -8,9 +8,10 @@ import java.util.List;
 
 @Data
 public class BoletaDTO {
-    @NotNull(message = "Debes seleccionar una dirección de despacho")
-    private Long direccionId;
-
-    @NotEmpty(message = "El carrito no puede estar vacío")
-    private List<DetalleDTO> items;
+    private Integer totalBoleta;
+    private String calle;
+    private Integer numeroDepto;
+    private String indicaciones;
+    private String comuna;
+    private List<DetalleDTO> detalles;
 }

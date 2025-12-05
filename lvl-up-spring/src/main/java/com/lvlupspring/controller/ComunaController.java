@@ -26,4 +26,14 @@ public class ComunaController {
     public ResponseEntity<List<Comuna>> findByRegionId(@PathVariable("regionId") Long regionId) {
         return ResponseEntity.ok(comunaService.findByRegionId(regionId));
     }
+
+    @GetMapping("/{comunaId} ")
+    public ResponseEntity<Comuna> findById(@PathVariable("comunaId") Long comunaId) {
+        return ResponseEntity.ok(comunaService.findById(comunaId));
+    }
+
+    @GetMapping("/nombre/{nombreComuna}")
+    public ResponseEntity<Comuna> findByNombreComuna(@PathVariable("nombreComuna") String nombreComuna) {
+        return ResponseEntity.ok(comunaService.findByNombreComuna(nombreComuna));
+    }
 }

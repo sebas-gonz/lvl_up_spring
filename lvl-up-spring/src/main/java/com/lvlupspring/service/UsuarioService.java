@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,11 +40,25 @@ public class UsuarioService {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setUsuarioId(usuario.getUsuarioId());
         usuarioDTO.setNombre(usuario.getNombre());
+        usuarioDTO.setApellido(usuario.getApellido());
         usuarioDTO.setEmail(usuario.getEmail());
         usuarioDTO.setFotoUsuario(usuario.getFotoUsuario());
-        usuarioDTO.setRol(usuario.getRol());
+        usuarioDTO.setRol(usuario.getRol().getNombreRol());
         usuarioDTO.setDvUsuario(usuario.getDvUsuario());
         usuarioDTO.setRunUsuario(usuario.getRunUsuario());
+        usuarioDTO.setFechaNacimiento(usuario.getFechaNacimiento());
         return usuarioDTO;
     }
+
+    public UsuarioDTO actualizarPerfil(UsuarioDTO dto, String email){
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellido(dto.getApellido());
+        usuario.setFechaNacimiento(dto.getFechaNacimiento());
+        usuario.setFotoUsuario(dto.getFotoUsuario());
+        usuario.setEmail(dto.getEmail());
+        Usuario usuarioActualizado = usuarioRepository.save(usuario);
+        return mapearDTO(usuarioActualizado);
+    }
+
 }

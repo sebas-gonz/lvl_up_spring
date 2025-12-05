@@ -16,4 +16,8 @@ public class RegionService {
     public List<Region> findAll() {
         return regionRepository.findAll();
     }
+
+    public Region findById(Long id) {
+        return regionRepository.findById(id).orElseThrow(() -> new RuntimeException("Región no encontrada"));
+    }
 }

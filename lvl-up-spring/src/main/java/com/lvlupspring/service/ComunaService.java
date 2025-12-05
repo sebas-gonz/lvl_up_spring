@@ -24,4 +24,8 @@ public class ComunaService {
         return comunaRepository.findByRegion_RegionId(regionId);
     }
 
+    public Comuna findByNombreComuna(String nombreComuna) {
+        return comunaRepository.findByNombreComuna(nombreComuna).orElse(null);
+    }
+
 }

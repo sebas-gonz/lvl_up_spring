@@ -5,6 +5,7 @@ import com.lvlupspring.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,5 +20,10 @@ public class RegionController {
     @GetMapping
     public ResponseEntity<List<Region>> findAll() {
         return ResponseEntity.ok(regionService.findAll());
+    }
+
+    @GetMapping("/{regionId}")
+    public ResponseEntity<Region> findById(@PathVariable("regionId") Long regionId) {
+        return ResponseEntity.ok(regionService.findById(regionId));
     }
 }

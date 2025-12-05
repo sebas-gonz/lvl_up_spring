@@ -57,4 +57,21 @@ public class ProductoService {
     public void delete(Long id) {
         productoRepository.deleteById(id);
     }
+
+    public Producto actualizarProducto(Long id, ProductoDTO dto) {
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId()).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        producto.setNombreProducto(dto.getNombre());
+        producto.setDescripcionProducto(dto.getDescripcion());
+        producto.setPrecio(dto.getPrecio());
+        producto.setStock(dto.getStock());
+        producto.setStockMinimo(dto.getStockMinimo());
+        producto.setOferta(dto.getOferta());
+        producto.setPrecioOferta(dto.getPrecioOferta());
+        producto.setImagenProducto(dto.getImagenUrl());
+        producto.setCategoria(categoria);
+
+        return productoRepository.save(producto);
+    }
 }

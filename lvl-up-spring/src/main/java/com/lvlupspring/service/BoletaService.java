@@ -25,42 +25,42 @@ public class BoletaService {
     @Transactional
     public Boleta crearBoleta(BoletaDTO boletaDTO, String emailUsuario) {
         Boleta nueva = new Boleta();
-        Direccion direccion = direccionRepository.findById(boletaDTO.getDireccionId()).orElseThrow( () ->new RuntimeException("Dirección no encontrada"));
-        Usuario usuario = usuarioRepository.findByEmail(emailUsuario).orElseThrow( () ->new RuntimeException("Usuario no encontrado"));
-
-        if (!direccion.getUsuario().getUsuarioId().equals(usuario.getUsuarioId())) {
-            throw new RuntimeException("La dirección no pertenece al usuario autenticado");
-        }
-
-        List<DetalleBoleta> detalles = new ArrayList<>();
-        Integer totalBoleta = 0;
+        Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         nueva.setUsuario(usuario);
-        nueva.setIndicaciones(direccion.getIndicaciones());
-        nueva.setNumeroDepto(direccion.getNumeroDepto());
-        nueva.setCalle(direccion.getCalle());
-        nueva.setComuna(direccion.getComuna().getNombreComuna());
-        for(DetalleDTO detalle: boletaDTO.getItems()){
-            Producto producto = productoRepository.findById(detalle.getProductoId()).orElseThrow( () ->new RuntimeException("Producto no encontrado"));
+        nueva.setCalle(boletaDTO.getCalle());
+        nueva.setNumeroDepto(boletaDTO.getNumeroDepto());
+        nueva.setIndicaciones(boletaDTO.getIndicaciones());
+        nueva.setComuna(boletaDTO.getComuna());
+        nueva.setTotalBoleta(boletaDTO.getTotalBoleta());
+
+        List<DetalleBoleta> detalles = new ArrayList<>();
+        Integer totalCalculado = 0;
+
+        for (DetalleDTO detalle : boletaDTO.getDetalles()) {
+            Producto producto = productoRepository.findById(detalle.getProductoId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            if (producto.getStock() < detalle.getCantidad()) {
+                throw new RuntimeException("Stock insuficiente para: " + producto.getNombreProducto());
+            }
+            producto.setStock(producto.getStock() - detalle.getCantidad());
+            productoRepository.save(producto);
             DetalleBoleta detalleBoleta = new DetalleBoleta();
             detalleBoleta.setCantidad(detalle.getCantidad());
             detalleBoleta.setProducto(producto);
             detalleBoleta.setBoleta(nueva);
+            Integer precioFinal = (producto.getOferta() != null && producto.getOferta())
+                    ? producto.getPrecioOferta()
+                    : producto.getPrecio();
 
-            if(producto.getStock() < detalle.getCantidad()){
-                throw new RuntimeException("Stock insuficiente para el producto: " + producto.getNombreProducto());
-            }
-            producto.setStock(producto.getStock() - detalle.getCantidad());
-            productoRepository.save(producto);
-
-            Integer subTotal;
-            subTotal = producto.getOferta() != true ? producto.getPrecio() * detalle.getCantidad() : producto.getPrecioOferta() * detalle.getCantidad();
-
+            Integer subTotal = precioFinal * detalle.getCantidad();
             detalleBoleta.setSubTotal(subTotal);
-            totalBoleta += subTotal;
+
+            totalCalculado += subTotal;
             detalles.add(detalleBoleta);
         }
-        nueva.setTotalBoleta(totalBoleta);
+        nueva.setTotalBoleta(totalCalculado);
         nueva.setDetalles(detalles);
         return boletaRepository.save(nueva);
     }
@@ -71,6 +71,10 @@ public class BoletaService {
 
     public Boleta findById(Long boletaId){
         return boletaRepository.findById(boletaId).orElse(null);
+    }
+
+    public List<Boleta> obtenerHistorialUsuario(Long usuarioId) {
+        return boletaRepository.findByUsuario_UsuarioId(usuarioId);
     }
 
 }

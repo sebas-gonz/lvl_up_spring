@@ -43,4 +43,6 @@ public class RegistroUsuarioDTO {
 
     @NotBlank(message = "Debes confirmar la contraseña")
     private String passwordConfirmation;
+
+    private Long rolId;
 }

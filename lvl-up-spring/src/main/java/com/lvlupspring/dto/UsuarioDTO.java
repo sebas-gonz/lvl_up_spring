@@ -16,5 +16,5 @@ public class UsuarioDTO {
     private LocalDate fechaNacimiento;
     private Integer runUsuario;
     private String dvUsuario;
-    private Rol rol;
+    private String rol;
 }

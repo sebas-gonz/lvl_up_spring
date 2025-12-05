@@ -26,11 +26,19 @@ public class AuthService {
 
     public AuthResponseDTO registrar(RegistroUsuarioDTO registroDTO) {
         Usuario usuario = new Usuario();
-        Rol rolUsuario = rolRepository.findByNombreRol("ROLE_USER").orElseGet(() -> {
-            Rol nuevoRol = new Rol();
-            nuevoRol.setNombreRol("ROLE_USER");
-            return rolRepository.save(nuevoRol);
-        });
+        Rol rolUsuario;
+
+        if (registroDTO.getRolId() != null) {
+            rolUsuario = rolRepository.findById(registroDTO.getRolId())
+                    .orElseThrow(() -> new RuntimeException("Error: Rol no encontrado."));
+        } else {
+            rolUsuario = rolRepository.findByNombreRol("ROLE_USER")
+                    .orElseGet(() -> {
+                        Rol nuevoRol = new Rol();
+                        nuevoRol.setNombreRol("ROLE_USER");
+                        return rolRepository.save(nuevoRol);
+                    });
+        }
         usuario.setRol(rolUsuario);
         usuario.setNombre(registroDTO.getNombre());
         usuario.setApellido(registroDTO.getApellido());

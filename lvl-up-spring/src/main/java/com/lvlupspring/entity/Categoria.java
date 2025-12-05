@@ -2,6 +2,7 @@ package com.lvlupspring.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -50,6 +51,6 @@ public class Categoria {
     private LocalDateTime updatedAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoria")
-    @JsonIgnore
+    @JsonManagedReference
     private List<Producto> productos;
 }

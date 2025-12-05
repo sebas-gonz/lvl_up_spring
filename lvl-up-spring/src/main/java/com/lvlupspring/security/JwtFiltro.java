@@ -36,7 +36,13 @@ public class JwtFiltro extends OncePerRequestFilter {
         }
 
         token = authHeader.substring(7);
-        email = jwtUtils.obtenerEmailDesdeToken(token);
+        try {
+            email = jwtUtils.obtenerEmailDesdeToken(token);
+        } catch (Exception e) {
+            logger.error("Token inválido al filtrar petición: " + e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.usuarioDetailsService.loadUserByUsername(email);
